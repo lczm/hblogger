@@ -1,5 +1,9 @@
 module Main where
 import Html
+import Markup
+
+print :: Show a => a -> IO ()
+print = putStrLn . show
 
 myhtml :: Html
 myhtml = 

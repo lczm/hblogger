@@ -33,6 +33,10 @@ append_ :: Structure -> Structure -> Structure
 append_ a b = 
     Structure (getStructureString a <> getStructureString b)
 
+instance Semigroup Structure where
+    (<>) c1 c2 =
+        Structure (getStructureString c1 <> getStructureString c2)
+
 el :: String -> String -> String
 el tag content =
     "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
