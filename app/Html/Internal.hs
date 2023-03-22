@@ -46,10 +46,26 @@ html_ title content =
             )
         )
 
+-- paragraphs
 -- This runs the input through escape first
 p_ :: String -> Structure
 p_ = Structure . el "p" . escape
 
+-- headers
 -- This runs the input through escape first
 h1_ :: String -> Structure
 h1_ = Structure . el "h1" . escape
+
+-- unordered lists
+ul_ :: [Structure] -> Structure
+ul_ contents =
+    Structure . el "ul" . concat . map ( el "li" . getStructureString ) $ contents
+
+-- ordered lists
+ol_ :: [Structure] -> Structure
+ol_ contents =
+    Structure . el "ol" . concat . map ( el "li" . getStructureString ) $ contents
+
+-- code blocks
+code_ :: String -> Structure
+code_ = Structure . el "pre" . escape
