@@ -2,7 +2,7 @@ module Convert where
 
 import qualified Markup
 import qualified Html
-import qualified Html.Internal as HI
+-- import qualified Html.Internal as HI
 
 convertStructure :: Markup.Structure -> Html.Structure
 convertStructure structure =
