@@ -1,4 +1,4 @@
-module Html.Internal where
+module Hblogger.Html.Internal where
 
 import Numeric.Natural
 

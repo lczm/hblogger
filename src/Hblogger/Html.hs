@@ -1,4 +1,4 @@
-module Html
+module Hblogger.Html
     ( Html
     , Title
     , Structure
@@ -13,4 +13,4 @@ module Html
     )
     where
 
-import Html.Internal
+import Hblogger.Html.Internal

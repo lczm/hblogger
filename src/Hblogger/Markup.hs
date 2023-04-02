@@ -1,4 +1,4 @@
-module Markup
+module Hblogger.Markup
     ( Document
     , Structure(..)
     , parse

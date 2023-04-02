@@ -1,8 +1,7 @@
 module Main where
-import Html
-import Markup
+
+import Hblogger ( convertSingle, convertDirectory )
 import OptParse
-import Convert (convert)
 
 import System.Exit (exitFailure)
 import System.Directory (doesFileExist)
@@ -39,18 +38,6 @@ main = do
             convertSingle title inputHandle outputHandle
             hClose inputHandle
             hClose outputHandle
-
-convertSingle :: Html.Title -> Handle -> Handle -> IO ()
-convertSingle title input output = do
-    content <- hGetContents input -- handle get contents
-    hPutStrLn output (process title content)
-
-convertDirectory :: FilePath -> FilePath -> IO ()
-convertDirectory = error "Not implemented"
-
--- Parse a document to markup, convert to HTML then render HTML to string
-process :: Html.Title -> String -> String
-process title = Html.render . convert title . Markup.parse
 
 confirm :: IO Bool
 confirm = do
