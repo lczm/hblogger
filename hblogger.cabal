@@ -24,13 +24,16 @@ extra-source-files: CHANGELOG.md
 library
     hs-source-dirs: src
     build-depends:
-        base
+        base,
+        filepath,
+        directory
     exposed-modules:
         Hblogger
             Hblogger.Convert
             Hblogger.Html
                 Hblogger.Html.Internal
             Hblogger.Markup
+            Hblogger.Directory
 
 executable hblogger
     main-is:          Main.hs

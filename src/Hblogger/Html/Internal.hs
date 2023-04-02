@@ -1,83 +1,257 @@
-module Hblogger.Html.Internal where
+-- module Hblogger.Html.Internal where
 
-import Numeric.Natural
+-- import Numeric.Natural
 
-newtype Html = Html String
-newtype Structure = Structure String
+-- newtype Html = Html String
+-- newtype Structure = Structure String
+-- newtype Content = Content String
 
-type Title = String
+-- type Title = String
 
-getStructureString :: Structure -> String
-getStructureString (Structure str) = str
+-- -- EDSL
+-- html_ :: Title -> Structure -> Html
+-- html_ title content =
+--     Html
+--         ( el "html"
+--             ( el "head" ( el "title" (escape title ))
+--                 <> el "body" (getStructureString content)
+--             )
+--         )
+
+-- -- Structure
+-- -- paragraphs
+-- -- This runs the input through escape first
+-- p_ :: String -> Structure
+-- p_ = Structure . el "p" . escape
+
+-- -- headers
+-- -- This runs the input through escape first
+-- h_ :: Natural -> String -> Structure
+-- h_ n = Structure . el ("h" <> show n) . escape
+
+-- -- unordered lists
+-- ul_ :: [Structure] -> Structure
+-- ul_ contents =
+--     Structure . el "ul" . concat . map ( el "li" . getStructureString ) $ contents
+
+-- -- ordered lists
+-- ol_ :: [Structure] -> Structure
+-- ol_ contents =
+--     Structure . el "ol" . concat . map ( el "li" . getStructureString ) $ contents
+
+-- -- code blocks
+-- code_ :: String -> Structure
+-- code_ = Structure . el "pre" . escape
+
+-- instance Semigroup Structure where
+--     (<>) c1 c2 =
+--         Structure (getStructureString c1 <> getStructureString c2)
+
+-- instance Monoid Structure where
+--     mempty = empty_
+
+-- -- Content
+-- txt_ :: String -> Content
+-- txt_ = Content . escape
+
+-- link_ :: FilePath -> Content -> Content
+-- link_ path content =
+--     Content $
+--         elAttr
+--             "a"
+--             ("href=\"" <> escape path <> "\"")
+--             (getContentString content)
+
+-- img_ :: FilePath -> Content
+-- img_ path = 
+--     Content $ "<img src=\"" <> escape path <> "\">"
+
+-- b_ :: Content -> Content
+-- b_ content =
+--     Content $ el "b" (getContentString content)
+
+-- i_ :: Content -> Content
+-- i_ content = 
+--     Content $ el "i" (getContentString content)
+
+-- instance Semigroup Content where
+--     (<>) c1 c2 =
+--         Content (getContentString c1 <> getContentString c2)
+
+-- instance Monoid Content where
+--     mempty = Content ""
+
+-- -- render
+-- render :: Html -> String
+-- render html =
+--     case html of
+--         Html str -> str
+
+-- -- utilities
+-- el :: String -> String -> String
+-- el tag content =
+--     "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
+
+-- elAttr :: String -> String -> String -> String
+-- elAttr tag attrs content = 
+--     "<" <> tag <> " " <> attrs <> ">" <> content <> "</" <> tag <> ">"
+
+-- getStructureString :: Structure -> String
 -- getStructureString content =
 --     case content of
 --         Structure str -> str
 
-render :: Html -> String
-render html =
-    case html of
-        Html str -> str
+-- getContentString :: Content -> String
+-- getContentString content = 
+--     case content of
+--         Content str -> str
 
-escape :: String -> String
-escape =
-    let 
-        escapeChar c =
-            case c of
-                '<' -> "&lt;"
-                '>' -> "&gt;"
-                '&' -> "&amp;"
-                '"' -> "&quot;"
-                '\'' -> "&#39;"
-                _ -> [c]
-    in concat . map escapeChar
+-- escape :: String -> String
+-- escape =
+--     let 
+--         escapeChar c =
+--             case c of
+--                 '<' -> "&lt;"
+--                 '>' -> "&gt;"
+--                 '&' -> "&amp;"
+--                 '"' -> "&quot;"
+--                 '\'' -> "&#39;"
+--                 _ -> [c]
+--     in concat . map escapeChar
 
-append_ :: Structure -> Structure -> Structure
-append_ a b = 
-    Structure (getStructureString a <> getStructureString b)
+-- append_ :: Structure -> Structure -> Structure
+-- append_ a b = 
+--     Structure (getStructureString a <> getStructureString b)
 
-instance Semigroup Structure where
-    (<>) c1 c2 =
-        Structure (getStructureString c1 <> getStructureString c2)
+-- empty_ :: Structure
+-- empty_ = Structure ""
 
-instance Monoid Structure where
-    mempty = empty_
+-- src/HsBlog/Html/Internal.hs
 
-el :: String -> String -> String
-el tag content =
-    "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
+module Hblogger.Html.Internal where
+
+import Numeric.Natural
+
+-- * Types
+
+newtype Html
+  = Html String
+
+newtype Structure
+  = Structure String
+
+newtype Content
+  = Content String
+
+type Title
+  = String
+
+-- * EDSL
 
 html_ :: Title -> Structure -> Html
 html_ title content =
-    Html
-        ( el "html"
-            ( el "head" ( el "title" (escape title ))
-                <> el "body" (getStructureString content)
-            )
-        )
+  Html
+    ( el "html"
+      ( el "head" (el "title" (escape title))
+        <> el "body" (getStructureString content)
+      )
+    )
 
--- paragraphs
--- This runs the input through escape first
-p_ :: String -> Structure
-p_ = Structure . el "p" . escape
+-- * Structure
 
--- headers
--- This runs the input through escape first
-h_ :: Natural -> String -> Structure
-h_ n = Structure . el ("h" <> show n) . escape
+p_ :: Content -> Structure
+p_ = Structure . el "p" . getContentString
 
--- unordered lists
+h_ :: Natural -> Content -> Structure
+h_ n = Structure . el ("h" <> show n) . getContentString
+
 ul_ :: [Structure] -> Structure
-ul_ contents =
-    Structure . el "ul" . concat . map ( el "li" . getStructureString ) $ contents
+ul_ =
+  Structure . el "ul" . concat . map (el "li" . getStructureString)
 
--- ordered lists
 ol_ :: [Structure] -> Structure
-ol_ contents =
-    Structure . el "ol" . concat . map ( el "li" . getStructureString ) $ contents
+ol_ =
+  Structure . el "ol" . concat . map (el "li" . getStructureString)
 
--- code blocks
 code_ :: String -> Structure
 code_ = Structure . el "pre" . escape
 
-empty_ :: Structure
-empty_ = Structure ""
+instance Semigroup Structure where
+  (<>) c1 c2 =
+    Structure (getStructureString c1 <> getStructureString c2)
+
+instance Monoid Structure where
+  mempty = Structure ""
+
+-- * Content
+
+txt_ :: String -> Content
+txt_ = Content . escape
+
+link_ :: FilePath -> Content -> Content
+link_ path content =
+  Content $
+    elAttr
+      "a"
+      ("href=\"" <> escape path <> "\"")
+      (getContentString content)
+
+img_ :: FilePath -> Content
+img_ path =
+  Content $ "<img src=\"" <> escape path <> "\">"
+
+b_ :: Content -> Content
+b_ content =
+  Content $ el "b" (getContentString content)
+
+i_ :: Content -> Content
+i_ content =
+  Content $ el "i" (getContentString content)
+
+instance Semigroup Content where
+  (<>) c1 c2 =
+    Content (getContentString c1 <> getContentString c2)
+
+instance Monoid Content where
+  mempty = Content ""
+
+-- * Render
+
+render :: Html -> String
+render html =
+  case html of
+    Html str -> str
+
+-- * Utilities
+
+el :: String -> String -> String
+el tag content =
+  "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
+
+elAttr :: String -> String -> String -> String
+elAttr tag attrs content =
+  "<" <> tag <> " " <> attrs <> ">" <> content <> "</" <> tag <> ">"
+
+getStructureString :: Structure -> String
+getStructureString structure =
+  case structure of
+    Structure str -> str
+
+getContentString :: Content -> String
+getContentString content =
+  case content of
+    Content str -> str
+
+escape :: String -> String
+escape =
+  let
+    escapeChar c =
+      case c of
+        '<' -> "&lt;"
+        '>' -> "&gt;"
+        '&' -> "&amp;"
+        '"' -> "&quot;"
+        '\'' -> "&#39;"
+        _ -> [c]
+  in
+    concat . map escapeChar
